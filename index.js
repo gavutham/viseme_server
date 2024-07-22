@@ -14,10 +14,6 @@ const speechConfig = sdk.SpeechConfig.fromSubscription(
   process.env.SPEECH_REGION
 );
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
-
 app.get("/tts", async (req, res) => {
   const inputText = req.body.text;
   const speechSynthesizer = new sdk.SpeechSynthesizer(speechConfig);
