@@ -31,9 +31,7 @@ app.post("/tts", async (req, res) => {
       const { audioData } = result;
       speechSynthesizer.close();
 
-      console.log(wavBuffer.length);
       res.setHeader("Content-Disposition", 'attachment; filename="output.wav"');
-      res.setHeader("Content-Length", wavBuffer.length);
       const base64Audio = Buffer.from(audioData).toString('base64');
       const base64String = `data:audio/wav;base64,${base64Audio}`;
 
