@@ -25,7 +25,7 @@ app.get("/tts", async (req, res) => {
       speechSynthesizer.close();
 
       const wavBuffer = Buffer.from(audioData);
-
+      console.log(wavBuffer.length);
       res.setHeader("Content-Type", "audio/wav");
       res.setHeader("Content-Disposition", 'attachment; filename="output.wav"');
       res.setHeader("Content-Length", wavBuffer.length);
@@ -41,13 +41,13 @@ app.get("/tts", async (req, res) => {
 
 app.get("/viseme", async (req, res) => {
   const inputText = req.body.text;
-
+  console.log(inputText);
   let outputArray = [];
 
   const synthesizer = new sdk.SpeechSynthesizer(speechConfig);
 
   synthesizer.visemeReceived = function (s, e) {
-    outputArray.push([e.visemeId, e.audioOffset / 10000]);
+    outputArray.push(e);
   };
 
   synthesizer.speakTextAsync(
