@@ -14,12 +14,20 @@ const speechConfig = sdk.SpeechConfig.fromSubscription(
   process.env.SPEECH_REGION
 );
 
-app.get("/tts", async (req, res) => {
+app.post("/tts", async (req, res) => {
   const inputText = req.body.text;
   const speechSynthesizer = new sdk.SpeechSynthesizer(speechConfig);
+  const ssml = `<speak version='1.0' xml:lang='en-US' xmlns='http://www.w3.org/2001/10/synthesis' xmlns:mstts='http://www.w3.org/2001/mstts'> \r\n \
+  <voice name='ta-IN-PallaviNeural'> \r\n \
+      <prosody rate='-100%' > \r\n \
+          <mstts:viseme type='redlips_front'/> \r\n \
+          ${inputText} \r\n \
+      </prosody> \r\n \
+  </voice> \r\n \
+</speak>`;
 
-  speechSynthesizer.speakTextAsync(
-    inputText,
+  speechSynthesizer.speakSsmlAsync(
+    ssml,
     (result) => {
       const { audioData } = result;
       speechSynthesizer.close();
