@@ -39,7 +39,7 @@ app.get("/tts", async (req, res) => {
   );
 });
 
-app.get("/viseme", async (req, res) => {
+app.post("/viseme", async (req, res) => {
   const inputText = req.body.text;
   console.log(inputText);
   let outputArray = [];
