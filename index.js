@@ -14,6 +14,10 @@ const speechConfig = sdk.SpeechConfig.fromSubscription(
   process.env.SPEECH_REGION
 );
 
+const path = require('path');
+const fs = require('fs');
+const { v4: uuidv4 } = require('uuid'); // To generate unique file names
+
 app.post("/tts", async (req, res) => {
   const inputText = req.body.text;
   const speechSynthesizer = new sdk.SpeechSynthesizer(speechConfig);
@@ -28,16 +32,24 @@ app.post("/tts", async (req, res) => {
 
   speechSynthesizer.speakSsmlAsync(
     ssml,
-    (result) => {
+    async (result) => {
       const { audioData } = result;
       speechSynthesizer.close();
 
       const wavBuffer = Buffer.from(audioData);
-      console.log(wavBuffer.length);
-      res.setHeader("Content-Type", "audio/wav");
-      res.setHeader("Content-Disposition", 'attachment; filename="output.wav"');
-      res.setHeader("Content-Length", wavBuffer.length);
-      res.send(wavBuffer);
+      const fileName = `${uuidv4()}.wav`;
+      const filePath = path.join(__dirname, 'public', 'audio', fileName);
+
+      fs.writeFile(filePath, wavBuffer, async (err) => {
+        if (err) {
+          console.log(err);
+          res.status(500).send("Error saving audio file");
+        } else {
+          // Assuming your server serves files from 'public/audio' directory
+          const fileUri = `https://localhost:3002/audio/${fileName}`;
+          res.json({ audioUri: fileUri });
+        }
+      });
     },
     (error) => {
       console.log(error);
@@ -46,6 +58,7 @@ app.post("/tts", async (req, res) => {
     }
   );
 });
+
 
 app.post("/viseme", async (req, res) => {
   const inputText = req.body.text;
