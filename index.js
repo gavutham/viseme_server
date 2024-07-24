@@ -1,6 +1,7 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
+const axios = require('axios');
 const sdk = require("microsoft-cognitiveservices-speech-sdk");
 
 const app = express();
@@ -15,12 +16,14 @@ const speechConfig = sdk.SpeechConfig.fromSubscription(
 );
 
 app.post("/tts", async (req, res) => {
+
+  const {inputText} = req.query;
   const speechSynthesizer = new sdk.SpeechSynthesizer(speechConfig);
   const ssml = `<speak version='1.0' xml:lang='en-US' xmlns='http://www.w3.org/2001/10/synthesis' xmlns:mstts='http://www.w3.org/2001/mstts'> \r\n \
   <voice name='ta-IN-PallaviNeural'> \r\n \
       <prosody rate='-100%' > \r\n \
           <mstts:viseme type='redlips_front'/> \r\n \
-          'அம்மா', \r\n \
+          ${inputText}, \r\n \
       </prosody> \r\n \
   </voice> \r\n \
 </speak>`;
@@ -69,6 +72,24 @@ app.post("/viseme", async (req, res) => {
       res.status(500).send("Error synthesizing speech");
     }
   );
+});
+
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+      const response = await axios.post('https://asr.iitm.ac.in/api/accounts/login/', {
+          email,
+          password
+      });
+
+      res.json(response.data);
+  } catch (error) {
+      res.status(error.response?.status || 500).json({
+          message: error.message,
+          ...(error.response?.data && { error: error.response.data })
+      });
+  }
 });
 
 app.listen(port, () => {
