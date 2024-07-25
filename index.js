@@ -15,7 +15,7 @@ const speechConfig = sdk.SpeechConfig.fromSubscription(
 );
 
 app.get("/tts", async (req, res) => {
-  const inputText = req.body.text;
+  const inputText = req.query.text;
   const speechSynthesizer = new sdk.SpeechSynthesizer(speechConfig);
 
   speechSynthesizer.speakTextAsync(
@@ -40,7 +40,7 @@ app.get("/tts", async (req, res) => {
 });
 
 app.get("/viseme", async (req, res) => {
-  const inputText = req.body.text;
+  const inputText = req.query.text;
 
   let outputArray = [];
 
