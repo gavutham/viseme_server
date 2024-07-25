@@ -20,7 +20,7 @@ app.get("/tts", async (req, res) => {
   const speechSynthesizer = new sdk.SpeechSynthesizer(speechConfig);
   const ssml = `<speak version='1.0' xml:lang='en-US' xmlns='http://www.w3.org/2001/10/synthesis' xmlns:mstts='http://www.w3.org/2001/mstts'> \r\n \
   <voice name='ta-IN-PallaviNeural'> \r\n \
-      <prosody rate='-100%' > \r\n \
+      <prosody pitch="slow" contour="slow" range="slow" rate="slow" duration="slow" volume="slow"> \r\n \
           <mstts:viseme type='redlips_front'/> \r\n \
           ${inputText}, \r\n \
       </prosody> \r\n \
@@ -48,9 +48,9 @@ app.get("/tts", async (req, res) => {
   );
 });
 
-app.get("/viseme", async (req, res) => {
-  const inputText = req.query.text;
-
+app.post("/viseme", async (req, res) => {
+  const {inputText} = req.query;
+  console.log(inputText);
   let outputArray = [];
 
   const synthesizer = new sdk.SpeechSynthesizer(speechConfig);
