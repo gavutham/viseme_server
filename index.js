@@ -15,12 +15,13 @@ const speechConfig = sdk.SpeechConfig.fromSubscription(
   process.env.SPEECH_REGION
 );
 
-app.get("/tts", async (req, res) => {
-  const inputText = req.query.text;
+app.post("/tts", async (req, res) => {
+
+  const {inputText} = req.query;
   const speechSynthesizer = new sdk.SpeechSynthesizer(speechConfig);
   const ssml = `<speak version='1.0' xml:lang='en-US' xmlns='http://www.w3.org/2001/10/synthesis' xmlns:mstts='http://www.w3.org/2001/mstts'> \r\n \
   <voice name='ta-IN-PallaviNeural'> \r\n \
-      <prosody pitch="slow" contour="slow" range="slow" rate="slow" duration="slow" volume="slow"> \r\n \
+      <prosody rate='-100%' > \r\n \
           <mstts:viseme type='redlips_front'/> \r\n \
           ${inputText}, \r\n \
       </prosody> \r\n \
@@ -34,7 +35,7 @@ app.get("/tts", async (req, res) => {
       speechSynthesizer.close();
 
       res.setHeader("Content-Disposition", 'attachment; filename="output.wav"');
-      const base64Audio = Buffer.from(audioData).toString("base64");
+      const base64Audio = Buffer.from(audioData).toString('base64');
       const base64String = `data:audio/wav;base64,${base64Audio}`;
 
       res.setHeader("Content-Type", "text/plain");
